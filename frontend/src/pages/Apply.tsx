@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Building2, Upload, CheckCircle, Loader2, FileText, X } from 'lucide-react';
-import axios from 'axios';
+import api from '../api/client';
 
 interface Job {
   id: number;
@@ -30,7 +30,7 @@ export default function Apply() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    axios.get(`/api/jobs/${jobId}`)
+    api.get(`/jobs/${jobId}`)
       .then((r) => {
         if (!r.data.is_active) setNotFound(true);
         else setJob(r.data);
@@ -60,7 +60,7 @@ export default function Apply() {
     formData.append('cv', file);
 
     try {
-      await axios.post(`/api/applications/apply/${jobId}`, formData, {
+      await api.post(`/applications/apply/${jobId}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setSubmitted(true);
