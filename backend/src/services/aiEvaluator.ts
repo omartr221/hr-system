@@ -1,12 +1,11 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import fs from 'fs';
 import pdfParse from 'pdf-parse';
 
-function getGenAI() {
-  if (!process.env.GEMINI_API_KEY) {
-    throw new Error('GEMINI_API_KEY is not configured');
+function getApiKey(): string {
+  if (!process.env.OPENROUTER_API_KEY) {
+    throw new Error('OPENROUTER_API_KEY is not configured');
   }
-  return new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  return process.env.OPENROUTER_API_KEY;
 }
 
 export interface EvaluationResult {
@@ -63,13 +62,27 @@ Respond ONLY with a valid JSON object in this exact format:
   "summary": "<2-3 sentence overall honest assessment>"
 }`;
 
-  const model = getGenAI().getGenerativeModel({
-    model: 'gemini-2.0-flash',
-    generationConfig: { responseMimeType: 'application/json', temperature: 0.2 },
+  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${getApiKey()}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'google/gemini-2.0-flash-exp:free',
+      messages: [{ role: 'user', content: prompt }],
+      response_format: { type: 'json_object' },
+      temperature: 0.2,
+    }),
   });
 
-  const response = await model.generateContent(prompt);
-  const content = response.response.text();
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`OpenRouter API error (${response.status}): ${err}`);
+  }
+
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content;
   if (!content) throw new Error('Empty response from AI');
 
   const result = JSON.parse(content) as EvaluationResult;
