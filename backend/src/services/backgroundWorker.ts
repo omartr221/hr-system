@@ -8,13 +8,6 @@ async function processPendingApplications(): Promise<void> {
   isProcessing = true;
 
   try {
-    console.log('[Worker] Checking for pending applications...');
-    const allRes = await db.execute('SELECT id, status, cv_path FROM applications');
-    console.log(`[Worker] Total applications in DB: ${allRes.rows.length}`);
-    for (const r of allRes.rows) {
-      console.log(`[Worker]   #${r.id} status=${r.status} cv_path=${r.cv_path}`);
-    }
-
     const pendingRes = await db.execute(
       `SELECT a.*, j.title as job_title, j.description as job_description,
               j.requirements as job_requirements
@@ -22,7 +15,10 @@ async function processPendingApplications(): Promise<void> {
        WHERE a.status = 'pending' LIMIT 5`
     );
     const pending = pendingRes.rows as any[];
-    console.log(`[Worker] Found ${pending.length} pending application(s)`);
+
+    if (pending.length > 0) {
+      console.log(`[Worker] Processing ${pending.length} pending application(s)...`);
+    }
 
 
     for (const application of pending) {

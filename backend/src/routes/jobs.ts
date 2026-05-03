@@ -13,7 +13,8 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 router.get('/:id', async (req: Request, res: Response) => {
-  const result = await db.execute({ sql: 'SELECT * FROM jobs WHERE id = ?', args: [req.params.id] });
+  const id = String(req.params.id);
+  const result = await db.execute({ sql: 'SELECT * FROM jobs WHERE id = ?', args: [id] });
   const job = result.rows[0];
   if (!job) { res.status(404).json({ error: 'Job not found' }); return; }
   res.json(job);
@@ -36,22 +37,24 @@ router.post('/', authenticate, requireAdmin, async (req: Request, res: Response)
 
 router.put('/:id', authenticate, requireAdmin, async (req: Request, res: Response) => {
   const { title, description, requirements, salary_min, salary_max, currency, is_active } = req.body;
-  const existing = await db.execute({ sql: 'SELECT id FROM jobs WHERE id = ?', args: [req.params.id] });
+  const id = String(req.params.id);
+  const existing = await db.execute({ sql: 'SELECT id FROM jobs WHERE id = ?', args: [id] });
   if (!existing.rows[0]) { res.status(404).json({ error: 'Job not found' }); return; }
   await db.execute({
     sql: `UPDATE jobs SET title=?, description=?, requirements=?,
           salary_min=?, salary_max=?, currency=?, is_active=? WHERE id=?`,
     args: [title, description, requirements, salary_min || null, salary_max || null,
-           currency || 'USD', is_active !== undefined ? is_active : 1, req.params.id],
+           currency || 'USD', is_active !== undefined ? is_active : 1, id],
   });
-  const updated = await db.execute({ sql: 'SELECT * FROM jobs WHERE id = ?', args: [req.params.id] });
+  const updated = await db.execute({ sql: 'SELECT * FROM jobs WHERE id = ?', args: [id] });
   res.json(updated.rows[0]);
 });
 
 router.delete('/:id', authenticate, requireAdmin, async (req: Request, res: Response) => {
-  const existing = await db.execute({ sql: 'SELECT id FROM jobs WHERE id = ?', args: [req.params.id] });
+  const id = String(req.params.id);
+  const existing = await db.execute({ sql: 'SELECT id FROM jobs WHERE id = ?', args: [id] });
   if (!existing.rows[0]) { res.status(404).json({ error: 'Job not found' }); return; }
-  await db.execute({ sql: 'DELETE FROM jobs WHERE id = ?', args: [req.params.id] });
+  await db.execute({ sql: 'DELETE FROM jobs WHERE id = ?', args: [id] });
   res.json({ message: 'Job deleted successfully' });
 });
 

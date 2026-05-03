@@ -48,7 +48,7 @@ const router = Router();
 
 router.post('/apply/:jobId', handleUpload, async (req: Request, res: Response) => {
   const { applicant_name, applicant_email, applicant_phone } = req.body;
-  const { jobId } = req.params;
+  const jobId = String(req.params.jobId);
 
   if (!applicant_name) { res.status(400).json({ error: 'Name is required' }); return; }
   if (!req.file) { res.status(400).json({ error: 'CV (PDF) file is required' }); return; }
@@ -72,8 +72,8 @@ router.get('/', authenticate, requireAdmin, async (req: Request, res: Response) 
   let query = `SELECT a.*, j.title as job_title FROM applications a JOIN jobs j ON a.job_id = j.id WHERE 1=1`;
   const args: (string | number)[] = [];
 
-  if (jobId) { query += ' AND a.job_id = ?'; args.push(jobId as string); }
-  if (status) { query += ' AND a.status = ?'; args.push(status as string); }
+  if (jobId) { query += ' AND a.job_id = ?'; args.push(String(jobId)); }
+  if (status) { query += ' AND a.status = ?'; args.push(String(status)); }
   query += ' ORDER BY a.created_at DESC';
 
   const result = await db.execute({ sql: query, args });
@@ -85,7 +85,7 @@ router.get('/:id', authenticate, requireAdmin, async (req: Request, res: Respons
     sql: `SELECT a.*, j.title as job_title, j.requirements as job_requirements,
                  j.description as job_description
           FROM applications a JOIN jobs j ON a.job_id = j.id WHERE a.id = ?`,
-    args: [req.params.id],
+    args: [String(req.params.id)],
   });
   if (!result.rows[0]) { res.status(404).json({ error: 'Application not found' }); return; }
   res.json(result.rows[0]);
@@ -96,18 +96,20 @@ router.patch('/:id/status', authenticate, requireAdmin, async (req: Request, res
   const validStatuses = ['pending', 'evaluating', 'completed', 'failed', 'hired', 'rejected'];
   if (!validStatuses.includes(status)) { res.status(400).json({ error: 'Invalid status' }); return; }
 
-  const existing = await db.execute({ sql: 'SELECT id FROM applications WHERE id = ?', args: [req.params.id] });
+  const id = String(req.params.id);
+  const existing = await db.execute({ sql: 'SELECT id FROM applications WHERE id = ?', args: [id] });
   if (!existing.rows[0]) { res.status(404).json({ error: 'Application not found' }); return; }
 
-  await db.execute({ sql: 'UPDATE applications SET status = ? WHERE id = ?', args: [status, req.params.id] });
-  const updated = await db.execute({ sql: 'SELECT * FROM applications WHERE id = ?', args: [req.params.id] });
+  await db.execute({ sql: 'UPDATE applications SET status = ? WHERE id = ?', args: [status, id] });
+  const updated = await db.execute({ sql: 'SELECT * FROM applications WHERE id = ?', args: [id] });
   res.json(updated.rows[0]);
 });
 
 router.post('/:id/re-evaluate', authenticate, requireAdmin, async (req: Request, res: Response) => {
-  const existing = await db.execute({ sql: 'SELECT id FROM applications WHERE id = ?', args: [req.params.id] });
+  const id = String(req.params.id);
+  const existing = await db.execute({ sql: 'SELECT id FROM applications WHERE id = ?', args: [id] });
   if (!existing.rows[0]) { res.status(404).json({ error: 'Application not found' }); return; }
-  await db.execute({ sql: "UPDATE applications SET status = 'pending' WHERE id = ?", args: [req.params.id] });
+  await db.execute({ sql: "UPDATE applications SET status = 'pending' WHERE id = ?", args: [id] });
   res.json({ message: 'Application queued for re-evaluation' });
 });
 
