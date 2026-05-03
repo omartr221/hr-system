@@ -81,7 +81,7 @@ Respond ONLY with a valid JSON object in this exact format:
     throw new Error(`OpenRouter API error (${response.status}): ${err}`);
   }
 
-  const data = await response.json();
+  const data: any = await response.json();
   const content = data.choices?.[0]?.message?.content;
   if (!content) throw new Error('Empty response from AI');
 
