@@ -29,7 +29,8 @@ async function processPendingApplications(): Promise<void> {
           application.cv_path as string,
           application.job_title as string,
           application.job_description as string,
-          application.job_requirements as string
+          application.job_requirements as string,
+          application.cv_text as string | null
         );
 
         await db.execute({

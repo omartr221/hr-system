@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import pdfParse from 'pdf-parse';
 import { db } from '../db/database';
 import { authenticate, requireAdmin } from '../middleware/auth';
 
@@ -56,12 +57,22 @@ router.post('/apply/:jobId', handleUpload, async (req: Request, res: Response) =
   const jobRes = await db.execute({ sql: 'SELECT id FROM jobs WHERE id = ? AND is_active = 1', args: [jobId] });
   if (!jobRes.rows[0]) { res.status(404).json({ error: 'Job not found or no longer active' }); return; }
 
+  // Extract text from PDF immediately so it's stored in DB
+  let cvText = '';
+  try {
+    const buffer = fs.readFileSync(req.file.path);
+    const data = await pdfParse(buffer);
+    cvText = data.text.trim();
+  } catch (e) {
+    console.log('[Upload] Warning: could not extract PDF text:', e);
+  }
+
   const ins = await db.execute({
     sql: `INSERT INTO applications
-            (job_id, applicant_name, applicant_email, applicant_phone, cv_filename, cv_path, status)
-          VALUES (?, ?, ?, ?, ?, ?, 'pending')`,
+            (job_id, applicant_name, applicant_email, applicant_phone, cv_filename, cv_path, cv_text, status)
+          VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')`,
     args: [jobId, applicant_name, applicant_email || null, applicant_phone || null,
-           req.file.originalname, req.file.path],
+           req.file.originalname, req.file.path, cvText || null],
   });
   const appRes = await db.execute({ sql: 'SELECT * FROM applications WHERE id = ?', args: [Number(ins.lastInsertRowid)] });
   res.status(201).json({ message: 'Application submitted successfully', application: appRes.rows[0] });

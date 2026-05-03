@@ -32,9 +32,17 @@ export async function evaluateResume(
   cvPath: string,
   jobTitle: string,
   jobDescription: string,
-  jobRequirements: string
+  jobRequirements: string,
+  storedCvText?: string | null
 ): Promise<EvaluationResult> {
-  const cvText = await extractTextFromPdf(cvPath);
+  let cvText = '';
+
+  if (storedCvText && storedCvText.length >= 50) {
+    console.log(`[AI] Using stored CV text (${storedCvText.length} chars)`);
+    cvText = storedCvText;
+  } else {
+    cvText = await extractTextFromPdf(cvPath);
+  }
 
   if (!cvText || cvText.length < 50) {
     throw new Error('Could not extract readable text from the PDF');

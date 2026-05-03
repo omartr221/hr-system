@@ -58,6 +58,11 @@ export async function initDb(): Promise<void> {
     );
   `);
 
+  // Add cv_text column if it doesn't exist (for storing extracted PDF text)
+  try {
+    await db.execute('ALTER TABLE applications ADD COLUMN cv_text TEXT');
+  } catch (_) { /* column already exists */ }
+
   const adminRes = await db.execute({ sql: 'SELECT id FROM users WHERE username = ?', args: ['admin'] });
   if (adminRes.rows.length === 0) {
     const passwordHash = bcrypt.hashSync('admin123', 10);
