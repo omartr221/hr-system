@@ -63,7 +63,7 @@ router.post('/apply/:jobId', handleUpload, async (req: Request, res: Response) =
     args: [jobId, applicant_name, applicant_email || null, applicant_phone || null,
            req.file.originalname, req.file.path],
   });
-  const appRes = await db.execute({ sql: 'SELECT * FROM applications WHERE id = ?', args: [ins.lastInsertRowid] });
+  const appRes = await db.execute({ sql: 'SELECT * FROM applications WHERE id = ?', args: [Number(ins.lastInsertRowid)] });
   res.status(201).json({ message: 'Application submitted successfully', application: appRes.rows[0] });
 });
 

@@ -31,7 +31,7 @@ router.post('/', authenticate, requireAdmin, async (req: Request, res: Response)
           VALUES (?, ?, ?, ?, ?, ?)`,
     args: [title, description, requirements, salary_min || null, salary_max || null, currency || 'USD'],
   });
-  const job = await db.execute({ sql: 'SELECT * FROM jobs WHERE id = ?', args: [ins.lastInsertRowid] });
+  const job = await db.execute({ sql: 'SELECT * FROM jobs WHERE id = ?', args: [Number(ins.lastInsertRowid)] });
   res.status(201).json(job.rows[0]);
 });
 
