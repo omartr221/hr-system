@@ -70,28 +70,50 @@ Respond ONLY with a valid JSON object in this exact format:
   "summary": "<2-3 sentence overall honest assessment>"
 }`;
 
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${getApiKey()}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'meta-llama/llama-3.3-70b-instruct:free',
-      messages: [{ role: 'user', content: prompt }],
-      response_format: { type: 'json_object' },
-      temperature: 0.2,
-    }),
-  });
+  const models = [
+    'meta-llama/llama-3.3-70b-instruct:free',
+    'deepseek/deepseek-chat-v3-0324:free',
+    'qwen/qwen3-30b-a3b:free',
+  ];
 
-  if (!response.ok) {
-    const err = await response.text();
-    throw new Error(`OpenRouter API error (${response.status}): ${err}`);
+  let content = '';
+  for (const model of models) {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      console.log(`[AI] Trying ${model} (attempt ${attempt})...`);
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${getApiKey()}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model,
+          messages: [{ role: 'user', content: prompt }],
+          response_format: { type: 'json_object' },
+          temperature: 0.2,
+        }),
+      });
+
+      if (response.status === 429) {
+        console.log(`[AI] Rate limited on ${model}, waiting 15s...`);
+        await new Promise(r => setTimeout(r, 15000));
+        continue;
+      }
+
+      if (!response.ok) {
+        const err = await response.text();
+        console.log(`[AI] Error on ${model}: ${err}`);
+        break; // try next model
+      }
+
+      const data: any = await response.json();
+      content = data.choices?.[0]?.message?.content || '';
+      if (content) break;
+    }
+    if (content) break;
   }
 
-  const data: any = await response.json();
-  const content = data.choices?.[0]?.message?.content;
-  if (!content) throw new Error('Empty response from AI');
+  if (!content) throw new Error('All AI models failed or rate limited');
 
   const result = JSON.parse(content) as EvaluationResult;
 
