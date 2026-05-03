@@ -71,9 +71,10 @@ Respond ONLY with a valid JSON object in this exact format:
 }`;
 
   const models = [
-    'meta-llama/llama-3.3-70b-instruct:free',
     'deepseek/deepseek-chat-v3-0324:free',
-    'qwen/qwen3-30b-a3b:free',
+    'meta-llama/llama-3.3-70b-instruct:free',
+    'google/gemma-3-27b-it:free',
+    'mistralai/mistral-small-3.1-24b-instruct:free',
   ];
 
   let content = '';
