@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>نظام HR الذكي — عرض تقديمي</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue:    #3b82f6;
+    --indigo:  #6366f1;
+    --purple:  #8b5cf6;
+    --cyan:    #06b6d4;
+    --green:   #10b981;
+    --orange:  #f59e0b;
+    --red:     #ef4444;
+    --bg:      #0a0f1e;
+    --card:    #111827;
+    --border:  rgba(255,255,255,0.08);
+    --text:    #f1f5f9;
+    --muted:   #94a3b8;
+  }
+
+  html, body { height: 100%; font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
+
+  /* ─── SLIDES ─── */
+  .deck { width: 100vw; height: 100vh; position: relative; }
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 60px 80px;
+    opacity: 0; pointer-events: none;
+    transition: opacity .5s ease, transform .5s ease;
+    transform: translateY(30px);
+  }
+  .slide.active { opacity: 1; pointer-events: all; transform: translateY(0); }
+  .slide.out    { opacity: 0; transform: translateY(-30px); }
+
+  /* ─── BACKGROUND MESHES ─── */
+  .mesh {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 20% 10%, rgba(99,102,241,.18) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 80%, rgba(6,182,212,.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(139,92,246,.08) 0%, transparent 60%);
+  }
+  .slide > * { position: relative; z-index: 1; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 20px; z-index: 100;
+    background: rgba(17,24,39,.85); backdrop-filter: blur(12px);
+    border: 1px solid var(--border); border-radius: 60px;
+    padding: 12px 28px;
+  }
+  nav button {
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); font-size: 20px; transition: color .2s;
+    font-family: inherit;
+  }
+  nav button:hover { color: var(--text); }
+  #counter { font-size: 13px; color: var(--muted); min-width: 60px; text-align: center; }
+  .dot-row { display: flex; gap: 8px; }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border); cursor: pointer;
+    transition: background .3s, transform .3s;
+  }
+  .dot.on { background: var(--blue); transform: scale(1.3); }
+
+  /* keyboard hint */
+  .hint { position: fixed; top: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: rgba(148,163,184,.4); z-index: 100; }
+
+  /* ─── TYPOGRAPHY ─── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 16px; border-radius: 999px; font-size: 13px; font-weight: 600;
+    margin-bottom: 20px;
+  }
+  .badge-blue   { background: rgba(59,130,246,.15);  color: #93c5fd; border: 1px solid rgba(59,130,246,.3); }
+  .badge-purple { background: rgba(139,92,246,.15);  color: #c4b5fd; border: 1px solid rgba(139,92,246,.3); }
+  .badge-cyan   { background: rgba(6,182,212,.15);   color: #67e8f9; border: 1px solid rgba(6,182,212,.3); }
+  .badge-green  { background: rgba(16,185,129,.15);  color: #6ee7b7; border: 1px solid rgba(16,185,129,.3); }
+  .badge-orange { background: rgba(245,158,11,.15);  color: #fcd34d; border: 1px solid rgba(245,158,11,.3); }
+
+  h1.hero {
+    font-size: clamp(42px, 6vw, 76px); font-weight: 900; line-height: 1.1;
+    text-align: center; letter-spacing: -1px;
+    background: linear-gradient(135deg, #fff 0%, #93c5fd 50%, #c4b5fd 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  h2.title {
+    font-size: clamp(28px, 4vw, 48px); font-weight: 800; text-align: center;
+    background: linear-gradient(135deg, #fff 30%, #93c5fd 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 12px;
+  }
+  .subtitle { font-size: 18px; color: var(--muted); text-align: center; max-width: 700px; line-height: 1.7; }
+
+  /* ─── CARDS ─── */
+  .cards { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; width: 100%; max-width: 1100px; }
+  .card {
+    flex: 1 1 260px; max-width: 320px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 28px 24px;
+    position: relative; overflow: hidden;
+    transition: transform .3s, border-color .3s;
+  }
+  .card:hover { transform: translateY(-4px); border-color: rgba(99,102,241,.4); }
+  .card::before {
+    content: ''; position: absolute; inset: 0; opacity: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(99,102,241,.12), transparent);
+    transition: opacity .3s;
+  }
+  .card:hover::before { opacity: 1; }
+  .card-icon { font-size: 32px; margin-bottom: 14px; }
+  .card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  .card p  { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+  /* ─── FLOW ─── */
+  .flow { display: flex; align-items: center; gap: 0; flex-wrap: wrap; justify-content: center; max-width: 1000px; }
+  .flow-step {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    text-align: center; width: 150px;
+  }
+  .flow-circle {
+    width: 72px; height: 72px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 700;
+    border: 2px solid;
+  }
+  .flow-arrow { font-size: 22px; color: var(--muted); margin: 0 -10px; padding-bottom: 30px; }
+  .flow-step span { font-size: 13px; color: var(--muted); font-weight: 600; }
+
+  /* ─── TECH STACK ─── */
+  .tech-grid { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; max-width: 900px; }
+  .tech-pill {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 20px; border-radius: 12px;
+    background: var(--card); border: 1px solid var(--border);
+    font-size: 14px; font-weight: 600;
+    transition: border-color .2s, transform .2s;
+  }
+  .tech-pill:hover { transform: translateY(-2px); border-color: rgba(99,102,241,.5); }
+  .tech-pill .dot-color { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ─── STATS ─── */
+  .stats { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; }
+  .stat-box {
+    text-align: center; padding: 32px 40px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+    min-width: 180px;
+  }
+  .stat-num {
+    font-size: 52px; font-weight: 900;
+    background: linear-gradient(135deg, #fff, #93c5fd);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    line-height: 1;
+  }
+  .stat-lbl { font-size: 13px; color: var(--muted); margin-top: 8px; font-weight: 600; }
+
+  /* ─── AI SCORE RING ─── */
+  .ai-demo {
+    display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; justify-content: center;
+    max-width: 900px;
+  }
+  .score-ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .score-label { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .ai-details { flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 14px; }
+  .ai-row { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; }
+  .ai-row h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .ai-row ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .ai-row li { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .ai-row li::before { content: '•'; font-size: 18px; }
+
+  /* ─── COMPARISON TABLE ─── */
+  .compare { width: 100%; max-width: 800px; border-collapse: collapse; }
+  .compare th, .compare td { padding: 14px 20px; text-align: center; font-size: 14px; border-bottom: 1px solid var(--border); }
+  .compare th { font-weight: 700; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .compare td:first-child { text-align: right; color: var(--text); font-weight: 600; }
+  .compare tr:last-child td { border-bottom: none; }
+  .yes { color: #6ee7b7; font-size: 18px; }
+  .no  { color: #fca5a5; font-size: 18px; }
+
+  /* ─── FINAL ─── */
+  .glow-line {
+    width: 200px; height: 3px; margin: 20px auto;
+    background: linear-gradient(90deg, transparent, var(--blue), var(--purple), transparent);
+    border-radius: 2px;
+  }
+
+  /* animated gradient border on hero */
+  .hero-border {
+    padding: 3px; border-radius: 24px;
+    background: linear-gradient(135deg, var(--blue), var(--purple), var(--cyan));
+    animation: rotateBorder 4s linear infinite;
+    display: inline-block;
+  }
+  .hero-border-inner {
+    background: var(--bg); border-radius: 22px;
+    padding: 16px 40px; font-size: 15px; color: var(--muted);
+  }
+
+  @keyframes rotateBorder {
+    0%   { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+  }
+
+  /* pulse dot */
+  @keyframes pulse { 0%,100% { transform: scale(1); opacity:1; } 50% { transform: scale(1.5); opacity:.6; } }
+  .pulse-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); animation: pulse 1.5s infinite; display: inline-block; }
+
+  /* slide-in children */
+  .slide.active .anim { animation: fadeUp .5s ease both; }
+  .slide.active .anim:nth-child(1) { animation-delay: .05s; }
+  .slide.active .anim:nth-child(2) { animation-delay: .15s; }
+  .slide.active .anim:nth-child(3) { animation-delay: .25s; }
+  .slide.active .anim:nth-child(4) { animation-delay: .35s; }
+  .slide.active .anim:nth-child(5) { animation-delay: .45s; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+  /* progress bar */
+  .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--blue), var(--purple)); transition: width .4s ease; z-index: 200; }
+
+  .divider { width: 60px; height: 4px; background: linear-gradient(90deg, var(--blue), var(--purple)); border-radius: 2px; margin: 16px auto 28px; }
+</style>
+</head>
+<body>
+
+<div class="mesh"></div>
+<div class="progress-bar" id="progressBar"></div>
+<p class="hint">← → للتنقل بين الشرائح</p>
+
+<div class="deck" id="deck">
+
+  <!-- ═══════════════════════════════ SLIDE 1: COVER ═══════ -->
+  <div class="slide active" id="s0">
+    <div class="badge badge-blue anim">🚀 نظام توظيف ذكي</div>
+    <h1 class="hero anim">نظام إدارة الموارد البشرية<br/>المدعوم بالذكاء الاصطناعي</h1>
+    <div class="divider anim"></div>
+    <p class="subtitle anim">منصة متكاملة لإدارة الوظائف وتقييم السير الذاتية تلقائياً باستخدام GPT-4o — من نشر الوظيفة حتى اتخاذ قرار التوظيف</p>
+    <div class="anim" style="margin-top:40px;">
+      <div class="hero-border">
+        <div class="hero-border-inner">
+          <span class="pulse-dot"></span>&nbsp; النظام يعمل الآن على <strong style="color:#fff">localhost:5173</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 2: PROBLEM ═══════ -->
+  <div class="slide" id="s1">
+    <div class="badge badge-orange anim">⚠️ المشكلة</div>
+    <h2 class="title anim">التوظيف التقليدي مضيعة للوقت</h2>
+    <div class="divider anim"></div>
+    <div class="cards anim">
+      <div class="card">
+        <div class="card-icon">📄</div>
+        <h3>مئات السيرالذاتية يومياً</h3>
+        <p>مراجعة كل CV يدوياً تستهلك ساعات من وقت فريق HR الثمين</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⏳</div>
+        <h3>عملية بطيئة وغير منتظمة</h3>
+        <p>لا يوجد معيار موحّد للتقييم، والنتائج تتفاوت من شخص لآخر</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔍</div>
+        <h3>صعوبة التتبع والمتابعة</h3>
+        <p>ضياع الطلبات في الإيميلات والجداول وغياب لوحة مركزية للإدارة</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 3: SOLUTION ═══════ -->
+  <div class="slide" id="s2">
+    <div class="badge badge-green anim">✅ الحل</div>
+    <h2 class="title anim">منصة HR ذكية ومتكاملة</h2>
+    <div class="divider anim"></div>
+    <div class="cards anim">
+      <div class="card">
+        <div class="card-icon">🤖</div>
+        <h3>تقييم AI تلقائي</h3>
+        <p>GPT-4o يحلل كل سيرة ذاتية ويعطيها نقاطاً من 100 مع تقرير تفصيلي فوري</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <h3>إدارة مركزية كاملة</h3>
+        <p>لوحة تحكم واحدة لكل الوظائف والطلبات والإحصائيات في مكان واحد</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔗</div>
+        <h3>رابط تقديم مباشر</h3>
+        <p>كل وظيفة لها رابط خاص يمكن مشاركته — المتقدم لا يحتاج حساب</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 4: HOW IT WORKS ═══════ -->
+  <div class="slide" id="s3">
+    <div class="badge badge-blue anim">⚙️ كيف يعمل النظام</div>
+    <h2 class="title anim">رحلة المتقدم من البداية للنهاية</h2>
+    <div class="divider anim"></div>
+    <div class="flow anim">
+      <div class="flow-step">
+        <div class="flow-circle" style="border-color:#3b82f6;background:rgba(59,130,246,.1);color:#93c5fd">📢</div>
+        <strong style="font-size:14px">نشر الوظيفة</strong>
+        <span>المسؤول يضيف<br/>الوظيفة</span>
+      </div>
+      <div class="flow-arrow">←</div>
+      <div class="flow-step">
+        <div class="flow-circle" style="border-color:#06b6d4;background:rgba(6,182,212,.1);color:#67e8f9">🔗</div>
+        <strong style="font-size:14px">مشاركة الرابط</strong>
+        <span>رابط خاص<br/>لكل وظيفة</span>
+      </div>
+      <div class="flow-arrow">←</div>
+      <div class="flow-step">
+        <div class="flow-circle" style="border-color:#8b5cf6;background:rgba(139,92,246,.1);color:#c4b5fd">📤</div>
+        <strong style="font-size:14px">رفع الـ CV</strong>
+        <span>المتقدم يرفع<br/>ملف PDF</span>
+      </div>
+      <div class="flow-arrow">←</div>
+      <div class="flow-step">
+        <div class="flow-circle" style="border-color:#f59e0b;background:rgba(245,158,11,.1);color:#fcd34d">🤖</div>
+        <strong style="font-size:14px">تقييم الـ AI</strong>
+        <span>تحليل تلقائي<br/>خلال ثوانٍ</span>
+      </div>
+      <div class="flow-arrow">←</div>
+      <div class="flow-step">
+        <div class="flow-circle" style="border-color:#10b981;background:rgba(16,185,129,.1);color:#6ee7b7">✅</div>
+        <strong style="font-size:14px">قرار التوظيف</strong>
+        <span>HR يوافق<br/>أو يرفض</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 5: AI EVALUATION ═══════ -->
+  <div class="slide" id="s4">
+    <div class="badge badge-purple anim">🧠 الذكاء الاصطناعي</div>
+    <h2 class="title anim">تقرير تقييم السيرة الذاتية</h2>
+    <div class="divider anim"></div>
+    <div class="ai-demo anim">
+      <div class="score-ring-wrap">
+        <svg width="160" height="160" viewBox="0 0 160 160">
+          <circle cx="80" cy="80" r="65" fill="none" stroke="#1e293b" stroke-width="14"/>
+          <circle cx="80" cy="80" r="65" fill="none" stroke="url(#scoreGrad)" stroke-width="14"
+            stroke-dasharray="408" stroke-dashoffset="102" stroke-linecap="round"
+            transform="rotate(-90 80 80)"/>
+          <defs>
+            <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#3b82f6"/>
+              <stop offset="100%" stop-color="#10b981"/>
+            </linearGradient>
+          </defs>
+          <text x="80" y="75" text-anchor="middle" fill="#fff" font-size="32" font-weight="900" font-family="Cairo">85</text>
+          <text x="80" y="97" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="Cairo">/100</text>
+        </svg>
+        <div class="badge badge-green" style="margin:0">Recommended ⭐</div>
+        <div class="score-label">النتيجة الإجمالية</div>
+      </div>
+      <div class="ai-details">
+        <div class="ai-row">
+          <h4 style="color:#6ee7b7">✅ نقاط القوة</h4>
+          <ul>
+            <li>خبرة 4 سنوات في مجال التطوير</li>
+            <li>إتقان التقنيات المطلوبة (React, Node.js)</li>
+            <li>مشاريع موثقة على GitHub</li>
+          </ul>
+        </div>
+        <div class="ai-row">
+          <h4 style="color:#fca5a5">⚠️ نقاط الضعف</h4>
+          <ul>
+            <li>لا توجد شهادات معتمدة</li>
+            <li>خبرة محدودة في العمل الجماعي</li>
+          </ul>
+        </div>
+        <div class="ai-row">
+          <h4 style="color:#93c5fd">📋 ملخص الـ AI</h4>
+          <p style="font-size:13px;color:var(--muted);line-height:1.6">مرشح قوي تقنياً يمتلك المهارات الأساسية للوظيفة. يُنصح بإجراء مقابلة لتقييم مهارات التواصل.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 6: FEATURES ═══════ -->
+  <div class="slide" id="s5">
+    <div class="badge badge-cyan anim">🛠️ المزايا الرئيسية</div>
+    <h2 class="title anim">كل ما تحتاجه في مكان واحد</h2>
+    <div class="divider anim"></div>
+    <div class="cards anim">
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h3>لوحة إحصائيات</h3>
+        <p>إجمالي الوظائف، الطلبات، متوسط نقاط الـ AI، أحدث الطلبات — كلها دفعة واحدة</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💼</div>
+        <h3>إدارة الوظائف</h3>
+        <p>إضافة، تعديل، حذف الوظائف. تفعيل/تعطيل التقديم. نسخ رابط التقديم بضغطة</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📋</div>
+        <h3>إدارة الطلبات</h3>
+        <p>فلترة حسب الوظيفة أو الحالة، عرض تفصيلي، إعادة تقييم، توظيف أو رفض</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔐</div>
+        <h3>أمان كامل</h3>
+        <p>JWT Authentication للمسؤولين، صفحة التقديم عامة بدون حساب للمتقدمين</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h3>معالجة خلفية</h3>
+        <p>Worker تلقائي يعمل كل 30 ثانية لمعالجة الطلبات الجديدة دون تدخل بشري</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📱</div>
+        <h3>تصميم متجاوب</h3>
+        <p>واجهة عصرية تعمل على كل الأجهزة، مبنية بـ Tailwind CSS و React</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 7: TECH STACK ═══════ -->
+  <div class="slide" id="s6">
+    <div class="badge badge-blue anim">⚙️ التقنيات المستخدمة</div>
+    <h2 class="title anim">Stack احترافي ومتكامل</h2>
+    <div class="divider anim"></div>
+    <div style="display:flex;gap:48px;flex-wrap:wrap;justify-content:center;max-width:1000px;" class="anim">
+      <div>
+        <p style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;font-weight:700">الواجهة الأمامية</p>
+        <div class="tech-grid" style="max-width:420px">
+          <div class="tech-pill"><div class="dot-color" style="background:#61dafb"></div>React 18</div>
+          <div class="tech-pill"><div class="dot-color" style="background:#3178c6"></div>TypeScript</div>
+          <div class="tech-pill"><div class="dot-color" style="background:#646cff"></div>Vite 5</div>
+          <div class="tech-pill"><div class="dot-color" style="background:#38bdf8"></div>Tailwind CSS</div>
+          <div class="tech-pill"><div class="dot-color" style="background:#f97316"></div>React Router v6</div>
+          <div class="tech-pill"><div class="dot-color" style="background:#f59e0b"></div>Lucide Icons</div>
+          <div class="tech-pill"><div class="dot-color" style="background:#5a67d8"></div>Axios</div>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;font-weight:700">الخادم والبيانات</p>
+        <div class="tech-grid" style="max-width:420px">
+          <div class="tech-pill"><div class="dot-color" style="background:#68a063"></div>Node.js</div>
+          <div class="tech-pill"><div class="dot-color" style="background:#e8e8e8"></div>Express 5</div>
+          <div class="tech-pill"><div class="dot-color" style="background:#3178c6"></div>TypeScript</div>
+          <div class="tech-pill"><div class="dot-color" style="background:#0f9d58"></div>LibSQL / SQLite</div>
+          <div class="tech-pill"><div class="dot-color" style="background:#ef4444"></div>JWT Auth</div>
+          <div class="tech-pill"><div class="dot-color" style="background:#10a37f"></div>OpenAI GPT-4o</div>
+          <div class="tech-pill"><div class="dot-color" style="background:#8b5cf6"></div>PDF-Parse</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 8: COMPARISON ═══════ -->
+  <div class="slide" id="s7">
+    <div class="badge badge-orange anim">📊 مقارنة</div>
+    <h2 class="title anim">نظامنا vs الطرق التقليدية</h2>
+    <div class="divider anim"></div>
+    <table class="compare anim">
+      <thead>
+        <tr>
+          <th style="text-align:right">الميزة</th>
+          <th>الطريقة التقليدية</th>
+          <th style="color:#93c5fd">نظامنا الذكي</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>تقييم السيرة الذاتية</td><td><span class="no">✗</span> يدوي / بطيء</td><td><span class="yes">✓</span> AI خلال ثوانٍ</td></tr>
+        <tr><td>معيار تقييم موحّد</td><td><span class="no">✗</span> غير موحّد</td><td><span class="yes">✓</span> نقاط من 100</td></tr>
+        <tr><td>لوحة تحكم مركزية</td><td><span class="no">✗</span> ملفات وإيميلات</td><td><span class="yes">✓</span> Dashboard متكامل</td></tr>
+        <tr><td>إدارة الوظائف</td><td><span class="no">✗</span> يدوية</td><td><span class="yes">✓</span> CRUD كامل</td></tr>
+        <tr><td>رابط تقديم مباشر</td><td><span class="no">✗</span> إيميل / نماذج</td><td><span class="yes">✓</span> رابط فوري</td></tr>
+        <tr><td>تقرير تفصيلي للمرشح</td><td><span class="no">✗</span> غير متوفر</td><td><span class="yes">✓</span> نقاط قوة وضعف</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 9: STATS ═══════ -->
+  <div class="slide" id="s8">
+    <div class="badge badge-green anim">📈 الكفاءة</div>
+    <h2 class="title anim">ماذا يوفّر النظام؟</h2>
+    <div class="divider anim"></div>
+    <div class="stats anim">
+      <div class="stat-box">
+        <div class="stat-num">95%</div>
+        <div class="stat-lbl">توفير في وقت<br/>مراجعة الـ CV</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">&lt;30s</div>
+        <div class="stat-lbl">وقت تقييم<br/>كل سيرة ذاتية</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">100%</div>
+        <div class="stat-lbl">معيار موحّد<br/>بدون تحيز</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">∞</div>
+        <div class="stat-lbl">قابلية التوسع<br/>بلا حدود</div>
+      </div>
+    </div>
+    <p class="subtitle anim" style="margin-top:32px;font-size:15px">النظام يعمل بشكل مستقل — ما تحتاج تتدخل في كل طلب</p>
+  </div>
+
+  <!-- ═══════════════════════════════ SLIDE 10: FINAL ═══════ -->
+  <div class="slide" id="s9">
+    <div class="badge badge-purple anim">🎯 الخلاصة</div>
+    <h1 class="hero anim" style="font-size:clamp(32px,5vw,58px)">جاهز للعمل<br/>الآن</h1>
+    <div class="glow-line anim"></div>
+    <p class="subtitle anim">النظام مثبّت ويعمل على جهازك. أضف وظيفتك الأولى، شارك الرابط، واترك الـ AI يتولى الباقي.</p>
+
+    <div class="anim" style="display:flex;gap:16px;margin-top:36px;flex-wrap:wrap;justify-content:center;">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 28px;text-align:center;">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:700;letter-spacing:1px">الواجهة</div>
+        <div style="font-size:16px;font-weight:700;color:#93c5fd">localhost:5173</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 28px;text-align:center;">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:700;letter-spacing:1px">الخادم</div>
+        <div style="font-size:16px;font-weight:700;color:#67e8f9">localhost:3001</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 28px;text-align:center;">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:700;letter-spacing:1px">الدخول</div>
+        <div style="font-size:16px;font-weight:700;color:#6ee7b7">admin / admin123</div>
+      </div>
+    </div>
+    <p class="anim" style="margin-top:28px;font-size:13px;color:rgba(148,163,184,.5)">بُني بـ Node.js · React · TypeScript · SQLite · OpenAI GPT-4o</p>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- ─── NAV ─── -->
+<nav>
+  <button id="prevBtn" onclick="go(-1)">→</button>
+  <div class="dot-row" id="dots"></div>
+  <span id="counter">1 / 10</span>
+  <button id="nextBtn" onclick="go(1)">←</button>
+</nav>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total  = slides.length;
+  let cur = 0;
+
+  const dotsEl = document.getElementById('dots');
+  const counter = document.getElementById('counter');
+  const bar = document.getElementById('progressBar');
+
+  // build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' on' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(n) {
+    if (n < 0 || n >= total) return;
+    slides[cur].classList.remove('active');
+    slides[cur].classList.add('out');
+    setTimeout(() => slides[cur < n ? cur : n + (cur > n ? 0 : 1)]?.classList.remove('out'), 500);
+    slides[cur].classList.remove('out');
+
+    cur = n;
+    slides.forEach((s, i) => { s.classList.toggle('active', i === cur); });
+    dotsEl.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+    counter.textContent = `${cur + 1} / ${total}`;
+    bar.style.width = `${((cur + 1) / total) * 100}%`;
+  }
+
+  function go(dir) { goTo(cur + dir); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp')   go(-1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowDown') go(1);
+  });
+
+  // init bar
+  bar.style.width = `${(1 / total) * 100}%`;
+</script>
+</body>
+</html>
