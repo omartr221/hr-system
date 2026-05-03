@@ -71,10 +71,11 @@ Respond ONLY with a valid JSON object in this exact format:
 }`;
 
   const models = [
-    'deepseek/deepseek-chat-v3-0324:free',
+    'google/gemma-4-31b-it:free',
+    'google/gemma-4-26b-a4b-it:free',
+    'nousresearch/hermes-3-llama-3.1-405b:free',
     'meta-llama/llama-3.3-70b-instruct:free',
-    'google/gemma-3-27b-it:free',
-    'mistralai/mistral-small-3.1-24b-instruct:free',
+    'deepseek/deepseek-chat-v3-0324:free',
   ];
 
   let content = '';
@@ -90,7 +91,6 @@ Respond ONLY with a valid JSON object in this exact format:
         body: JSON.stringify({
           model,
           messages: [{ role: 'user', content: prompt }],
-          response_format: { type: 'json_object' },
           temperature: 0.2,
         }),
       });
@@ -116,7 +116,10 @@ Respond ONLY with a valid JSON object in this exact format:
 
   if (!content) throw new Error('All AI models failed or rate limited');
 
-  const result = JSON.parse(content) as EvaluationResult;
+  // Extract JSON from possibly wrapped response (e.g. ```json ... ```)
+  const jsonMatch = content.match(/\{[\s\S]*\}/);
+  const jsonStr = jsonMatch ? jsonMatch[0] : content;
+  const result = JSON.parse(jsonStr) as EvaluationResult;
 
   if (
     typeof result.score !== 'number' ||
