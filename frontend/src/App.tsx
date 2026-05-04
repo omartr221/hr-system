@@ -8,6 +8,8 @@ import Jobs from './pages/Jobs';
 import Applications from './pages/Applications';
 import ApplicationDetail from './pages/ApplicationDetail';
 import Apply from './pages/Apply';
+import Landing from './pages/Landing';
+import DemoLogin from './pages/DemoLogin';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -26,6 +28,8 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 function AppRoutes() {
   return (
     <Routes>
+      <Route path="/landing" element={<Landing />} />
+      <Route path="/demo-login" element={<DemoLogin />} />
       <Route path="/login" element={<Login />} />
       <Route path="/apply/:jobId" element={<Apply />} />
       <Route
