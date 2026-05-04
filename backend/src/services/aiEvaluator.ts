@@ -71,11 +71,13 @@ Respond ONLY with a valid JSON object in this exact format:
 }`;
 
   const models = [
+    'openrouter/owl-alpha',
+    'tencent/hy3-preview:free',
+    'inclusionai/ling-2.6-1t:free',
+    'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
     'google/gemma-4-31b-it:free',
-    'google/gemma-4-26b-a4b-it:free',
     'nousresearch/hermes-3-llama-3.1-405b:free',
     'meta-llama/llama-3.3-70b-instruct:free',
-    'deepseek/deepseek-chat-v3-0324:free',
   ];
 
   let content = '';
