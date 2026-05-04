@@ -22,6 +22,16 @@ async function processPendingApplications(): Promise<void> {
 
 
     for (const application of pending) {
+      // Skip old applications that have no cv_text and lost their PDF file
+      const hasCvText = application.cv_text && (application.cv_text as string).length >= 50;
+      const fs = await import('fs');
+      const hasFile = fs.existsSync(application.cv_path as string);
+      if (!hasCvText && !hasFile) {
+        console.log(`[Worker] ⏭️  Skipping application #${application.id} — no CV text and PDF file missing`);
+        await db.execute({ sql: "UPDATE applications SET status = 'failed' WHERE id = ?", args: [application.id] });
+        continue;
+      }
+
       try {
         await db.execute({ sql: "UPDATE applications SET status = 'evaluating' WHERE id = ?", args: [application.id] });
 
@@ -42,10 +52,16 @@ async function processPendingApplications(): Promise<void> {
         });
 
         console.log(`[Worker] ✅ Application #${application.id} evaluated — score: ${result.score}/100`);
-      } catch (error) {
+      } catch (error: any) {
         const message = error instanceof Error ? error.message : String(error);
-        console.error(`[Worker] ❌ Failed to evaluate application #${application.id}: ${message}`);
-        await db.execute({ sql: "UPDATE applications SET status = 'failed' WHERE id = ?", args: [application.id] });
+        if (error.rateLimited) {
+          // Rate limited — put back to pending, will retry next cycle
+          console.log(`[Worker] ⏳ Application #${application.id} rate limited — will retry in 30s`);
+          await db.execute({ sql: "UPDATE applications SET status = 'pending' WHERE id = ?", args: [application.id] });
+        } else {
+          console.error(`[Worker] ❌ Failed to evaluate application #${application.id}: ${message}`);
+          await db.execute({ sql: "UPDATE applications SET status = 'failed' WHERE id = ?", args: [application.id] });
+        }
       }
     }
   } finally {
@@ -54,7 +70,7 @@ async function processPendingApplications(): Promise<void> {
 }
 
 export async function startBackgroundWorker(): Promise<void> {
-  const stuck = await db.execute(`UPDATE applications SET status='pending' WHERE status IN ('evaluating','failed')`);
+  const stuck = await db.execute(`UPDATE applications SET status='pending' WHERE status = 'evaluating'`);
   if (stuck.rowsAffected > 0) {
     console.log(`[Worker] ♻️  Reset ${stuck.rowsAffected} stuck/failed application(s) to pending`);
   }

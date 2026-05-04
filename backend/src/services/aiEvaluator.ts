@@ -114,7 +114,11 @@ Respond ONLY with a valid JSON object in this exact format:
     if (content) break;
   }
 
-  if (!content) throw new Error('All AI models failed or rate limited');
+  if (!content) {
+    const err = new Error('RATE_LIMITED: All models busy, will retry');
+    (err as any).rateLimited = true;
+    throw err;
+  }
 
   // Extract JSON from possibly wrapped response (e.g. ```json ... ```)
   const jsonMatch = content.match(/\{[\s\S]*\}/);
