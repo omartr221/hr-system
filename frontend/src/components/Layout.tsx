@@ -4,9 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import { LayoutDashboard, Briefcase, Users, LogOut, Building2 } from 'lucide-react';
 
 const navItems = [
-  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/jobs', icon: Briefcase, label: 'Jobs' },
-  { to: '/applications', icon: Users, label: 'Applications' },
+  { to: '/dashboard', icon: LayoutDashboard, label: 'لوحة التحكم' },
+  { to: '/jobs', icon: Briefcase, label: 'الوظائف' },
+  { to: '/applications', icon: Users, label: 'الطلبات' },
 ];
 
 export default function Layout() {
@@ -19,7 +19,7 @@ export default function Layout() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-950">
+    <div className="flex min-h-screen bg-gray-950" dir="rtl">
       <aside className="w-64 bg-gray-900 border-r border-gray-800 flex flex-col">
         <div className="p-6 border-b border-gray-800">
           <div className="flex items-center gap-3">
@@ -27,8 +27,8 @@ export default function Layout() {
               <Building2 className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="font-bold text-white text-sm">HR System</h1>
-              <p className="text-xs text-gray-400">AI-Powered</p>
+              <h1 className="font-bold text-white text-sm">نظام الموارد البشرية</h1>
+              <p className="text-xs text-gray-400">بالذكاء الاصطناعي</p>
             </div>
           </div>
         </div>
@@ -67,7 +67,7 @@ export default function Layout() {
             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-400 hover:text-red-400 hover:bg-gray-800 rounded-lg transition-colors"
           >
             <LogOut className="w-4 h-4" />
-            Logout
+            تسجيل خروج
           </button>
         </div>
       </aside>

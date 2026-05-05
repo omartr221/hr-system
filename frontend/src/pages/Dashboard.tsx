@@ -75,12 +75,12 @@ export default function Dashboard() {
   if (!stats) return null;
 
   const statCards = [
-    { label: 'Total Jobs', value: stats.totalJobs, sub: `${stats.activeJobs} active`, icon: Briefcase, color: 'blue' },
-    { label: 'Applications', value: stats.totalApplications, sub: 'all time', icon: Users, color: 'purple' },
-    { label: 'Pending Review', value: stats.pendingEvaluations, sub: 'awaiting AI', icon: Clock, color: 'yellow' },
-    { label: 'Avg AI Score', value: stats.avgScore !== null ? `${stats.avgScore}` : '—', sub: 'out of 100', icon: TrendingUp, color: 'green' },
-    { label: 'Evaluated', value: stats.completedEvaluations, sub: 'completed', icon: CheckCircle, color: 'teal' },
-    { label: 'Hired', value: stats.hiredCount, sub: 'this pipeline', icon: UserCheck, color: 'emerald' },
+    { label: 'إجمالي الوظائف', value: stats.totalJobs, sub: `${stats.activeJobs} نشطة`, icon: Briefcase, color: 'blue' },
+    { label: 'الطلبات', value: stats.totalApplications, sub: 'إجمالي', icon: Users, color: 'purple' },
+    { label: 'بانتظار المراجعة', value: stats.pendingEvaluations, sub: 'بانتظار الذكاء الاصطناعي', icon: Clock, color: 'yellow' },
+    { label: 'متوسط التقييم', value: stats.avgScore !== null ? `${stats.avgScore}` : '—', sub: 'من 100', icon: TrendingUp, color: 'green' },
+    { label: 'تم تقييمهم', value: stats.completedEvaluations, sub: 'مكتمل', icon: CheckCircle, color: 'teal' },
+    { label: 'تم توظيفهم', value: stats.hiredCount, sub: 'في هذه الدورة', icon: UserCheck, color: 'emerald' },
   ];
 
   const colorMap: Record<string, string> = {
@@ -95,8 +95,8 @@ export default function Dashboard() {
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-        <p className="text-gray-400 mt-1">Recruitment overview at a glance</p>
+        <h1 className="text-2xl font-bold text-white">لوحة التحكم</h1>
+        <p className="text-gray-400 mt-1">نظرة عامة على التوظيف</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
@@ -117,13 +117,13 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-white">Applications by Job</h2>
+            <h2 className="font-semibold text-white">الطلبات حسب الوظيفة</h2>
             <Link to="/jobs" className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
-              View jobs <ChevronRight className="w-3 h-3" />
+              عرض الوظائف <ChevronRight className="w-3 h-3" />
             </Link>
           </div>
           {stats.applicationsByJob.length === 0 ? (
-            <p className="text-gray-500 text-sm">No jobs yet</p>
+            <p className="text-gray-500 text-sm">لا توجد وظائف بعد</p>
           ) : (
             <div className="space-y-3">
               {stats.applicationsByJob.map((job) => (
@@ -135,7 +135,7 @@ export default function Dashboard() {
                         className="h-1.5 bg-blue-600 rounded-full"
                         style={{ width: `${Math.min((job.count / (stats.totalApplications || 1)) * 100 * 2, 100)}%`, minWidth: '8px' }}
                       />
-                      <span className="text-xs text-gray-400">{job.count} applicants</span>
+                      <span className="text-xs text-gray-400">{job.count} متقدم</span>
                     </div>
                   </div>
                   {job.avg_score !== null && (
@@ -149,13 +149,13 @@ export default function Dashboard() {
 
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-white">Recent Applications</h2>
+            <h2 className="font-semibold text-white">آخر الطلبات</h2>
             <Link to="/applications" className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
-              View all <ChevronRight className="w-3 h-3" />
+              عرض الكل <ChevronRight className="w-3 h-3" />
             </Link>
           </div>
           {stats.recentApplications.length === 0 ? (
-            <p className="text-gray-500 text-sm">No applications yet</p>
+            <p className="text-gray-500 text-sm">لا توجد طلبات بعد</p>
           ) : (
             <div className="space-y-3">
               {stats.recentApplications.map((app) => (

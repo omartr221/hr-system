@@ -75,13 +75,13 @@ export default function Applications() {
     a.job_title.toLowerCase().includes(search.toLowerCase())
   );
 
-  const formatDate = (d: string) => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const formatDate = (d: string) => new Date(d).toLocaleDateString('ar-SA', { month: 'short', day: 'numeric', year: 'numeric' });
 
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Applications</h1>
-        <p className="text-gray-400 mt-1">Review and manage all job applications</p>
+        <h1 className="text-2xl font-bold text-white">الطلبات</h1>
+        <p className="text-gray-400 mt-1">مراجعة وإدارة جميع طلبات التوظيف</p>
       </div>
 
       <div className="flex flex-wrap gap-3 mb-6">
@@ -90,7 +90,7 @@ export default function Applications() {
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name or job..."
+            placeholder="بحث بالاسم أو الوظيفة..."
             className="w-full pl-9 pr-4 py-2 bg-gray-900 border border-gray-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           />
         </div>
@@ -101,7 +101,7 @@ export default function Applications() {
             onChange={(e) => setFilterJob(e.target.value)}
             className="py-2 px-3 bg-gray-900 border border-gray-800 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">All Jobs</option>
+            <option value="">كل الوظائف</option>
             {jobs.map((j) => <option key={j.id} value={j.id}>{j.title}</option>)}
           </select>
           <select
@@ -109,13 +109,13 @@ export default function Applications() {
             onChange={(e) => setFilterStatus(e.target.value)}
             className="py-2 px-3 bg-gray-900 border border-gray-800 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="evaluating">Evaluating</option>
-            <option value="completed">Completed</option>
-            <option value="failed">Failed</option>
-            <option value="hired">Hired</option>
-            <option value="rejected">Rejected</option>
+            <option value="">كل الحالات</option>
+            <option value="pending">قيد الانتظار</option>
+            <option value="evaluating">جاري التقييم</option>
+            <option value="completed">مكتمل</option>
+            <option value="failed">فشل</option>
+            <option value="hired">تم التوظيف</option>
+            <option value="rejected">مرفوض</option>
           </select>
         </div>
       </div>
@@ -126,18 +126,18 @@ export default function Applications() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-20">
-          <p className="text-gray-400">No applications found</p>
+          <p className="text-gray-400">لا توجد طلبات</p>
         </div>
       ) : (
         <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-800">
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-400 uppercase tracking-wider">Applicant</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-400 uppercase tracking-wider">Job</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-400 uppercase tracking-wider">AI Score</th>
+                <th className="text-right px-6 py-3 text-xs font-medium text-gray-400 tracking-wider">المتقدم</th>
+                <th className="text-right px-6 py-3 text-xs font-medium text-gray-400 tracking-wider">الوظيفة</th>
+                <th className="text-right px-6 py-3 text-xs font-medium text-gray-400 tracking-wider">التاريخ</th>
+                <th className="text-right px-6 py-3 text-xs font-medium text-gray-400 tracking-wider">الحالة</th>
+                <th className="text-right px-6 py-3 text-xs font-medium text-gray-400 tracking-wider">تقييم AI</th>
                 <th className="px-6 py-3"></th>
               </tr>
             </thead>
