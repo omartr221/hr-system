@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Brain, Briefcase, Zap, Shield, BarChart3, Users, ChevronRight,
-  Star, ArrowRight, Sparkles, Check, Play, Globe, Clock, Target,
+  Brain, Briefcase, Zap, Shield, BarChart3, Users, ChevronLeft,
+  Star, ArrowLeft, Sparkles, Check, Play, Globe, Clock, Target,
 } from 'lucide-react';
 
 function AnimatedCounter({ end, duration = 2000, suffix = '' }: { end: number; duration?: number; suffix?: string }) {
@@ -23,54 +23,54 @@ function AnimatedCounter({ end, duration = 2000, suffix = '' }: { end: number; d
 const features = [
   {
     icon: Brain,
-    title: 'AI-Powered Evaluation',
-    desc: 'Advanced AI analyzes every resume against job requirements and gives detailed scoring with strengths & weaknesses.',
+    title: 'تقييم بالذكاء الاصطناعي',
+    desc: 'ذكاء اصطناعي متقدم يحلل كل سيرة ذاتية مقابل متطلبات الوظيفة ويعطي تقييم مفصّل بنقاط القوة والضعف.',
     gradient: 'from-violet-500 to-purple-600',
   },
   {
     icon: Zap,
-    title: 'Instant Processing',
-    desc: 'Automated background processing evaluates applications as they arrive — no manual screening needed.',
+    title: 'معالجة فورية',
+    desc: 'معالجة تلقائية بالخلفية تقيّم الطلبات فور وصولها — بدون فرز يدوي.',
     gradient: 'from-amber-500 to-orange-600',
   },
   {
     icon: BarChart3,
-    title: 'Smart Analytics',
-    desc: 'Real-time dashboard with hiring metrics, AI scores, and pipeline tracking at a glance.',
+    title: 'تحليلات ذكية',
+    desc: 'لوحة تحكم بالوقت الفعلي مع مقاييس التوظيف ونتائج الذكاء الاصطناعي وتتبع المرشحين.',
     gradient: 'from-cyan-500 to-blue-600',
   },
   {
     icon: Shield,
-    title: 'Secure & Reliable',
-    desc: 'Cloud-hosted infrastructure with encrypted data storage and role-based access control.',
+    title: 'آمن وموثوق',
+    desc: 'بنية تحتية سحابية مع تشفير البيانات وتحكم بصلاحيات الوصول.',
     gradient: 'from-emerald-500 to-green-600',
   },
   {
     icon: Globe,
-    title: 'Shareable Job Links',
-    desc: 'Generate public application links for each job — share them anywhere and collect CVs automatically.',
+    title: 'روابط وظائف قابلة للمشاركة',
+    desc: 'أنشئ روابط تقديم عامة لكل وظيفة — شاركها في أي مكان واجمع السير الذاتية تلقائياً.',
     gradient: 'from-pink-500 to-rose-600',
   },
   {
     icon: Target,
-    title: 'Detailed Recommendations',
-    desc: 'Get clear hire/reject recommendations backed by specific strengths and weakness analysis.',
+    title: 'توصيات مفصّلة',
+    desc: 'احصل على توصيات واضحة بالتوظيف أو الرفض مدعومة بتحليل نقاط القوة والضعف.',
     gradient: 'from-indigo-500 to-blue-600',
   },
 ];
 
 const stats = [
-  { value: 95, suffix: '%', label: 'Screening Accuracy' },
-  { value: 10, suffix: 'x', label: 'Faster Than Manual' },
-  { value: 500, suffix: '+', label: 'Resumes Per Hour' },
-  { value: 0, suffix: '$', label: 'Setup Cost', prefix: '' },
+  { value: 95, suffix: '%', label: 'دقة الفرز' },
+  { value: 10, suffix: 'x', label: 'أسرع من اليدوي' },
+  { value: 500, suffix: '+', label: 'سيرة ذاتية بالساعة' },
+  { value: 0, suffix: '$', label: 'تكلفة الإعداد' },
 ];
 
 const steps = [
-  { num: '01', title: 'Create a Job', desc: 'Add your job posting with title, description, and requirements.' },
-  { num: '02', title: 'Share the Link', desc: 'Get a unique application link to share with candidates.' },
-  { num: '03', title: 'AI Evaluates', desc: 'Our AI reads every CV and scores it against your requirements.' },
-  { num: '04', title: 'Hire the Best', desc: 'Review AI recommendations and hire top candidates with confidence.' },
+  { num: '01', title: 'أنشئ وظيفة', desc: 'أضف إعلان الوظيفة مع العنوان والوصف والمتطلبات.' },
+  { num: '02', title: 'شارك الرابط', desc: 'احصل على رابط تقديم فريد لمشاركته مع المرشحين.' },
+  { num: '03', title: 'الذكاء الاصطناعي يقيّم', desc: 'الذكاء الاصطناعي يقرأ كل سيرة ذاتية ويقيّمها مقابل متطلباتك.' },
+  { num: '04', title: 'وظّف الأفضل', desc: 'راجع توصيات الذكاء الاصطناعي ووظّف أفضل المرشحين بثقة.' },
 ];
 
 export default function Landing() {
@@ -83,7 +83,7 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white overflow-x-hidden">
+    <div className="min-h-screen bg-[#030712] text-white overflow-x-hidden" dir="rtl">
       {/* Navbar */}
       <nav className="fixed top-0 w-full z-50 bg-[#030712]/80 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -96,19 +96,19 @@ export default function Landing() {
             </span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-gray-400">
-            <a href="#features" className="hover:text-white transition-colors">Features</a>
-            <a href="#how-it-works" className="hover:text-white transition-colors">How it Works</a>
-            <a href="#demo" className="hover:text-white transition-colors">Demo</a>
+            <a href="#features" className="hover:text-white transition-colors">المميزات</a>
+            <a href="#how-it-works" className="hover:text-white transition-colors">كيف يعمل</a>
+            <a href="#demo" className="hover:text-white transition-colors">تجربة</a>
           </div>
           <div className="flex items-center gap-3">
             <Link to="/login" className="text-sm text-gray-400 hover:text-white transition-colors px-4 py-2">
-              Sign In
+              تسجيل دخول
             </Link>
             <Link
               to="/login"
               className="text-sm font-medium bg-gradient-to-r from-blue-500 to-violet-600 hover:from-blue-400 hover:to-violet-500 px-5 py-2.5 rounded-full transition-all shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
             >
-              Get Started
+              ابدأ الآن
             </Link>
           </div>
         </div>
@@ -131,23 +131,23 @@ export default function Landing() {
         <div className="relative max-w-5xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm text-gray-300 mb-8 backdrop-blur-sm">
             <Sparkles className="w-4 h-4 text-violet-400" />
-            AI-Powered HR Platform
+            منصة موارد بشرية بالذكاء الاصطناعي
           </div>
 
           <h1 className="text-5xl md:text-7xl font-black leading-tight mb-6">
             <span className="bg-gradient-to-r from-white via-white to-gray-500 bg-clip-text text-transparent">
-              Hire Smarter.
+              وظّف بذكاء.
             </span>
             <br />
             <span className="bg-gradient-to-r from-blue-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
-              Hire Faster.
+              وظّف بسرعة.
             </span>
           </h1>
 
           <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Stop spending hours screening resumes manually.
-            Our AI evaluates every candidate in seconds — giving you
-            <span className="text-white font-medium"> detailed scores, strengths, and recommendations</span> instantly.
+            توقف عن قضاء ساعات في فرز السير الذاتية يدوياً.
+            الذكاء الاصطناعي يقيّم كل مرشح بثوانٍ — ويعطيك
+            <span className="text-white font-medium"> نتائج مفصّلة ونقاط قوة وتوصيات</span> فوراً.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -156,14 +156,14 @@ export default function Landing() {
               className="group flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-violet-600 hover:from-blue-400 hover:to-violet-500 rounded-full text-lg font-semibold transition-all shadow-2xl shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105"
             >
               <Play className="w-5 h-5" />
-              Try Live Demo
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              جرّب الآن
+              <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
             </a>
             <a
               href="#features"
               className="flex items-center gap-2 px-8 py-4 rounded-full border border-white/10 text-gray-300 hover:text-white hover:border-white/30 transition-all text-lg"
             >
-              Learn More
+              اعرف المزيد
             </a>
           </div>
 
@@ -187,11 +187,11 @@ export default function Landing() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-black mb-4">
               <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-                Everything you need
+                كل ما تحتاجه
               </span>
             </h2>
             <p className="text-gray-400 text-lg max-w-xl mx-auto">
-              A complete AI-powered hiring pipeline — from posting to hiring.
+              منصة توظيف متكاملة بالذكاء الاصطناعي — من نشر الوظيفة حتى التوظيف.
             </p>
           </div>
 
@@ -219,10 +219,10 @@ export default function Landing() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-black mb-4">
               <span className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-                How it works
+                كيف يعمل
               </span>
             </h2>
-            <p className="text-gray-400 text-lg">Four simple steps to revolutionize your hiring.</p>
+            <p className="text-gray-400 text-lg">أربع خطوات بسيطة لثورة في عملية التوظيف.</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -248,16 +248,16 @@ export default function Landing() {
             <div className="relative m-[1px] bg-[#0a0f1e] rounded-3xl p-10 md:p-16 text-center">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 text-blue-400 text-sm mb-6">
                 <Sparkles className="w-4 h-4" />
-                Live Demo Available
+                تجربة حية متاحة
               </div>
 
               <h2 className="text-3xl md:text-5xl font-black mb-4">
-                See it in action
+                شاهده بالعمل
               </h2>
               <p className="text-gray-400 text-lg max-w-xl mx-auto mb-10">
-                Explore the full platform with pre-loaded jobs, applications, and
-                <span className="text-white font-medium"> real AI evaluations</span>.
-                No signup required.
+                استكشف المنصة الكاملة مع وظائف وطلبات محمّلة مسبقاً و
+                <span className="text-white font-medium"> تقييمات ذكاء اصطناعي حقيقية</span>.
+                بدون تسجيل.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -266,22 +266,22 @@ export default function Landing() {
                   className="group flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-violet-600 hover:from-blue-400 hover:to-violet-500 rounded-full text-lg font-semibold transition-all shadow-2xl shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105"
                 >
                   <Play className="w-5 h-5" />
-                  Launch Demo
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  ابدأ التجربة
+                  <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                 </Link>
                 <Link
                   to="/login"
                   className="flex items-center gap-2 px-8 py-4 rounded-full border border-white/10 text-gray-300 hover:text-white hover:border-white/30 transition-all text-lg"
                 >
-                  Admin Login
-                  <ChevronRight className="w-4 h-4" />
+                  دخول المدير
+                  <ChevronLeft className="w-4 h-4" />
                 </Link>
               </div>
 
               <div className="flex items-center justify-center gap-6 mt-8 text-sm text-gray-500">
-                <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-green-400" /> No signup needed</span>
-                <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-green-400" /> Full features</span>
-                <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-green-400" /> Real AI results</span>
+                <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-green-400" /> بدون تسجيل</span>
+                <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-green-400" /> جميع الميزات</span>
+                <span className="flex items-center gap-1.5"><Check className="w-4 h-4 text-green-400" /> نتائج AI حقيقية</span>
               </div>
             </div>
           </div>
@@ -297,8 +297,8 @@ export default function Landing() {
             </div>
             <span className="font-bold text-white">HireAI</span>
           </div>
-          <p className="text-sm text-gray-500">
-            Built with AI. Designed for modern HR teams.
+          <p className="text-sm text-gray-400">
+            تم إنشاؤه بواسطة <span className="text-white font-semibold">عمر طرابلسي</span>
           </p>
           <div className="flex items-center gap-4 text-sm text-gray-500">
             <span>© 2024 HireAI</span>
